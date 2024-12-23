@@ -484,13 +484,28 @@ impl PwmBatch {
 
 impl<'d> Drop for Pwm<'d> {
     fn drop(&mut self) {
-        pac::PWM.ch(self.slice).csr().write_clear(|w| w.set_en(false));
+        let p = pac::PWM.ch(self.slice);
         if let Some(pin) = &self.pin_a {
+            p.cc().modify(|w| {
+                w.set_a(0);
+            });
             pin.gpio().ctrl().write(|w| w.set_funcsel(31));
+            //Enable pin PULL-DOWN
+            pin.pad_ctrl().modify(|w| {
+                w.set_pde(true);
+            });
         }
         if let Some(pin) = &self.pin_b {
+            p.cc().modify(|w| {
+                w.set_b(0);
+            });
             pin.gpio().ctrl().write(|w| w.set_funcsel(31));
+            //Enable pin PULL-DOWN
+            pin.pad_ctrl().modify(|w| {
+                w.set_pde(true);
+            });
         }
+        p.csr().write_clear(|w| w.set_en(false));
     }
 }
 
