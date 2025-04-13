@@ -1,4 +1,4 @@
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 #![allow(async_fn_in_trait)]
 #![warn(missing_docs)]
 #![doc = include_str!("../README.md")]
@@ -15,6 +15,8 @@ pub(crate) mod fmt;
 #[cfg(feature = "dns")]
 pub mod dns;
 mod driver_util;
+#[cfg(feature = "icmp")]
+pub mod icmp;
 #[cfg(feature = "raw")]
 pub mod raw;
 #[cfg(feature = "tcp")]
